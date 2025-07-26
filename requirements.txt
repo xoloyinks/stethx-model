@@ -1,0 +1,9 @@
+fastapi
+pydantic
+pickle
+numpy
+pandas
+requests
+json
+uvicorn
+re
