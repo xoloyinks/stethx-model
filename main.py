@@ -223,5 +223,5 @@ async def predict(input: InputData):
         print(f"General error: {e}")
         raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
 
-if __name__ == "__main__":
-    uvicorn.run(app, host='localhost', port=5000)
+# if __name__ == "__main__":
+#     uvicorn.run(app, host='localhost', port=5000)
