@@ -7,12 +7,12 @@ import pandas as pd
 import requests
 import json
 import re
-from dotenv import dotenv_values, load_dotenv
+import os
+from dotenv import load_dotenv
 
 
-# Load environment variables from .env file
-load_dotenv()
-config = dotenv_values(".env")
+if os.environ.get("RENDER") is None:
+    load_dotenv()
 
 
 app = FastAPI()
@@ -29,7 +29,7 @@ app.add_middleware(
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 # api key from environment variable or config file for security
 
-OPENROUTER_API_KEY = config.get("OPENROUTER_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 FEATURE_NAMES = ['gender', 'age', 'hypertension', 'heart_disease', 'smoking_history', 'bmi', 'HbA1c_level', 'blood_glucose_level']
 
