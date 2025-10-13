@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 import requests
 import json
-import uvicorn
 import re
 from dotenv import dotenv_values
 
