@@ -7,8 +7,11 @@ import pandas as pd
 import requests
 import json
 import re
-from dotenv import dotenv_values
+from dotenv import dotenv_values, load_dotenv
 
+
+# Load environment variables from .env file
+load_dotenv()
 config = dotenv_values(".env")
 
 
