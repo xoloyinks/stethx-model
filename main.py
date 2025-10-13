@@ -8,13 +8,16 @@ import requests
 import json
 import uvicorn
 import re
+from dotenv import dotenv_values
 
-# FastAPI app setup
+config = dotenv_values(".env")
+
+
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with your frontend origin
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -22,12 +25,12 @@ app.add_middleware(
 
 # OpenRouter API configuration
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_API_KEY = "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"  # Replace with your API key or use environment variable
+# api key from environment variable or config file for security
 
-# Define feature names in the correct order
+OPENROUTER_API_KEY = config.get("OPENROUTER_API_KEY")
+
 FEATURE_NAMES = ['gender', 'age', 'hypertension', 'heart_disease', 'smoking_history', 'bmi', 'HbA1c_level', 'blood_glucose_level']
 
-# Define decoding mappings
 GENDER_DECODE = {0: "Female", 1: "Male"}
 SMOKING_HISTORY_DECODE = {
     4: "never",
@@ -38,7 +41,7 @@ SMOKING_HISTORY_DECODE = {
     5: "not current"
 }
 
-# Load model at startup
+
 filename = 'finalized_model.sav'
 try:
     with open(filename, 'rb') as file:
@@ -46,30 +49,24 @@ try:
 except Exception as e:
     raise Exception(f"Error loading model: {e}")
 
-# Define input schema (list of values)
 class InputData(BaseModel):
-    data: list[float]  # e.g., 
+    data: list[float]
     name: str
 
-# Function to validate and format input data
 def format_input_data(input_list):
     if len(input_list) != len(FEATURE_NAMES):
         raise HTTPException(status_code=400, detail=f"Expected {len(FEATURE_NAMES)} features, got {len(input_list)}")
     
-    # Validate encoded values
     if input_list[0] not in [0, 1]:
         raise HTTPException(status_code=400, detail=f"Invalid gender value: {input_list[0]}. Expected 0 (Female) or 1 (Male)")
     if input_list[4] not in [0, 1, 2, 3, 4, 5]:
         raise HTTPException(status_code=400, detail=f"Invalid smoking_history value: {input_list[4]}. Expected 0, 1, 2, 3, 4, or 5")
     
-    # Create patient_data dictionary for LLM prompt
     patient_data = dict(zip(FEATURE_NAMES, input_list))
     
-    # Use NumPy array for prediction (matches your working code)
     input_array = np.asarray(input_list).reshape(1, -1)
     return input_array, patient_data
 
-# Function to decode patient data for the LLM prompt
 def decode_patient_data(patient_data):
     decoded_data = patient_data.copy()
     decoded_data['gender'] = GENDER_DECODE.get(patient_data['gender'], patient_data['gender'])
@@ -192,7 +189,7 @@ def call_openrouter_api(prompt):
         print(f"API request failed: {e}")
         raise HTTPException(status_code=500, detail=f"OpenRouter API request failed: {e}")
 
-# Prediction endpoint
+
 @app.post('/predict')
 async def predict(input: InputData):
     try:
@@ -224,4 +221,5 @@ async def predict(input: InputData):
         raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
 
 # if __name__ == "__main__":
-#     uvicorn.run(app, host='localhost', port=5000)
+    # uvicorn.run(app, host='localhost', port=5000)
+    
