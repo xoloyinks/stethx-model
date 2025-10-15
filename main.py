@@ -9,6 +9,7 @@ import json
 import re
 import os
 from dotenv import load_dotenv
+import uvicorn
 
 
 if os.environ.get("RENDER") is None:
@@ -155,7 +156,8 @@ def call_openrouter_api(prompt):
         "Content-Type": "application/json",
     }
     payload = {
-        "model": "deepseek/deepseek-chat-v3-0324:free",
+        "model": "openai/gpt-oss-20b:free",
+        # "model": "deepseek/deepseek-chat-v3-0324:free",
         "messages": [{"role": "user", "content": prompt}],
         "max_tokens": 1500,
         "temperature": 0.5,
@@ -222,6 +224,6 @@ async def predict(input: InputData):
         print(f"General error: {e}")
         raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
 
-# if __name__ == "__main__":
-    # uvicorn.run(app, host='localhost', port=5000)
+if __name__ == "__main__":
+    uvicorn.run(app, host='localhost', port=5000)
     
