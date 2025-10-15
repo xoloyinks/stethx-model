@@ -26,9 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# OpenRouter API configuration
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-# api key from environment variable or config file for security
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
@@ -46,6 +44,7 @@ SMOKING_HISTORY_DECODE = {
 
 
 filename = 'finalized_model.sav'
+
 try:
     with open(filename, 'rb') as file:
         model = pickle.load(file)
